@@ -1,6 +1,6 @@
 // @flow
 
-import { Alert, AsyncStorage } from 'react-native';
+import { Alert } from 'react-native';
 import { createCipher, createDecipher } from 'react-native-crypto';
 import nacl from 'tweetnacl';
 import { retrieveImage, saveImage } from '../../../utils/filesystem';
@@ -16,6 +16,7 @@ import {
   setConnections,
   setPassword,
   setHashedId,
+  setTrustedConnections,
 } from '../../../actions';
 import {
   uInt8ArrayToB64,
@@ -23,11 +24,10 @@ import {
   b64ToUrlSafeB64,
   strToUint8Array,
 } from '../../../utils/encoding';
-import { saveConnection } from '../../../actions/connections';
 
-export const setTrustedConnections = async () => {
+export const setTrusted = async () => {
   try {
-    const { trustedConnections } = store.getState().main;
+    const { trustedConnections } = store.getState();
     await api.setTrusted(trustedConnections);
     return true;
   } catch (err) {
@@ -44,7 +44,7 @@ const hashId = (id: string, password: string) => {
 };
 
 export const encryptAndBackup = async (key: string, data: string) => {
-  let { id, hashedId, password } = store.getState().main;
+  let { id, hashedId, password } = store.getState();
   if (!hashedId) hashedId = hashId(id, password);
   try {
     const cipher = createCipher('aes128', password);
@@ -58,7 +58,7 @@ export const encryptAndBackup = async (key: string, data: string) => {
   }
 };
 
-const backupPhoto = async (id: string, filename: string) => {
+export const backupPhoto = async (id: string, filename: string) => {
   try {
     const data = await retrieveImage(filename);
     await encryptAndBackup(id, data);
@@ -67,18 +67,19 @@ const backupPhoto = async (id: string, filename: string) => {
   }
 };
 
-const backupConnectionPhotos = async () => {
+const backupPhotos = async () => {
   try {
-    const { connections } = store.getState().main;
+    const { connections, id, photo } = store.getState();
     for (const item of connections) {
       await backupPhoto(item.id, item.photo.filename);
     }
+    await backupPhoto(id, photo.filename);
   } catch (err) {
     err instanceof Error ? console.warn(err.message) : console.warn(err);
   }
 };
 
-const backupUser = async () => {
+export const backupUser = async () => {
   try {
     const {
       score,
@@ -87,7 +88,7 @@ const backupUser = async () => {
       id,
       connections,
       trustedConnections,
-    } = store.getState().main;
+    } = store.getState();
     const userData = {
       id,
       name,
@@ -100,7 +101,6 @@ const backupUser = async () => {
       trustedConnections,
     });
     await encryptAndBackup('data', dataStr);
-    await backupPhoto(id, photo.filename);
   } catch (err) {
     err instanceof Error ? console.warn(err.message) : console.warn(err);
   }
@@ -111,14 +111,14 @@ export const backupAppData = async () => {
     // backup user
     await backupUser();
     // backup connection photos
-    await backupConnectionPhotos();
+    await backupPhotos();
   } catch (err) {
     err instanceof Error ? console.warn(err.message) : console.warn(err);
   }
 };
 
 export const setupRecovery = () => {
-  let { recoveryData } = store.getState().main;
+  let { recoveryData } = store.getState();
   recoveryData.sigs = [];
   store.dispatch(setRecoveryData(recoveryData));
   if (recoveryData.timestamp) return;
@@ -137,10 +137,7 @@ export const setupRecovery = () => {
 
 export const recoveryQrStr = () => {
   try {
-    const {
-      publicKey: signingKey,
-      timestamp,
-    } = store.getState().main.recoveryData;
+    const { publicKey: signingKey, timestamp } = store.getState().recoveryData;
     return `Recovery_${JSON.stringify({ signingKey, timestamp })}`;
   } catch (err) {
     throw err;
@@ -168,7 +165,7 @@ export const setRecoverySig = async (
   timestamp: number,
 ) => {
   try {
-    const { id: userId, secretKey } = store.getState().main;
+    const { id: userId, secretKey } = store.getState();
     const message = id + signingKey + timestamp;
     const sig = uInt8ArrayToB64(
       nacl.sign.detached(strToUint8Array(message), secretKey),
@@ -182,7 +179,7 @@ export const setRecoverySig = async (
 };
 
 export const sigExists = (data: Signature) => {
-  const { recoveryData } = store.getState().main;
+  const { recoveryData } = store.getState();
   return (
     recoveryData.sigs.length === 1 &&
     recoveryData.sigs[0].sig === data.sig &&
@@ -193,7 +190,7 @@ export const sigExists = (data: Signature) => {
 
 export const handleSigs = async (data?: Signature) => {
   if (!data || sigExists(data)) return;
-  const { recoveryData } = store.getState().main;
+  const { recoveryData } = store.getState();
   if (
     (recoveryData.sigs[0] && recoveryData.sigs[0].id !== data.id) ||
     recoveryData.sigs.length === 0
@@ -210,7 +207,7 @@ export const handleSigs = async (data?: Signature) => {
 };
 
 export const setSigningKey = async () => {
-  const { recoveryData } = store.getState().main;
+  const { recoveryData } = store.getState();
   console.log('setting signing key');
   try {
     await api.setSigningKey({
@@ -231,7 +228,7 @@ export const setSigningKey = async () => {
 
 export const fetchBackupData = async (key: string, pass: string) => {
   try {
-    const hashedId = hashId(store.getState().main.recoveryData.id, pass);
+    const hashedId = hashId(store.getState().recoveryData.id, pass);
     const decipher = createDecipher('aes128', pass);
     const res = await backupApi.getRecovery(hashedId, key);
     const decrypted =
@@ -247,11 +244,11 @@ export const fetchBackupData = async (key: string, pass: string) => {
 
 export const restoreUserData = async (pass: string) => {
   try {
-    const { id, secretKey, publicKey } = store.getState().main.recoveryData;
+    const { id, secretKey, publicKey } = store.getState().recoveryData;
 
     const decrypted = await fetchBackupData('data', pass);
 
-    const { userData, connections } = JSON.parse(decrypted);
+    const { userData, connections, trustedConnections } = JSON.parse(decrypted);
     if (!userData || !connections) {
       throw new Error('bad password');
     }
@@ -269,7 +266,7 @@ export const restoreUserData = async (pass: string) => {
       userData.photo = { filename };
     }
 
-    return { userData, connections };
+    return { userData, connections, trustedConnections };
   } catch (err) {
     throw err;
   }
@@ -278,15 +275,16 @@ export const restoreUserData = async (pass: string) => {
 export const recoverData = async (pass: string) => {
   try {
     // fetch user data / save photo
-    const { userData, connections } = await restoreUserData(pass);
+    const { userData, connections, trustedConnections } = await restoreUserData(
+      pass,
+    );
 
     // set new signing key on the backend
     await setSigningKey();
 
-    // TODO REMOVE THIS FOR V1 / add trusted connections
-    await AsyncStorage.setItem('userData', JSON.stringify(userData));
     store.dispatch(setUserData(userData));
     store.dispatch(setConnections(connections));
+    store.dispatch(setTrustedConnections(trustedConnections));
 
     for (const conn of connections) {
       let decrypted = await fetchBackupData(conn.id, pass);
@@ -295,8 +293,6 @@ export const recoverData = async (pass: string) => {
         base64Image: decrypted,
       });
       conn.photo = { filename };
-      // add connection inside of async storage
-      await saveConnection(conn);
     }
 
     store.dispatch(setBackupCompleted(true));

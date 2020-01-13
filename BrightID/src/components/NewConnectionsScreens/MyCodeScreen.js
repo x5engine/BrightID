@@ -47,7 +47,7 @@ type State = {
 
 const COPIED_TIMEOUT = 500;
 
-class MyCodeScreen extends React.Component<Props, State> {
+export class MyCodeScreen extends React.Component<Props, State> {
   connectionExpired: TimeoutID;
 
   socket: { close: () => null };
@@ -61,9 +61,9 @@ class MyCodeScreen extends React.Component<Props, State> {
     // After 2 minutes, connection attempts expire on the server.
     //  Let users start the connection over after one minute so there will be
     //  time for the other user to connect.
+    const { dispatch } = this.props;
     this.connectionExpired = setTimeout(this.navigateToHome, 60000);
     emitter.on('connectDataReady', this.navigateToPreview);
-    const { dispatch } = this.props;
     dispatch(removeConnectQrData());
     dispatch(genQrData()).then(() => {
       this.genQrCode();
@@ -175,9 +175,7 @@ class MyCodeScreen extends React.Component<Props, State> {
           <View style={styles.photoContainer}>
             <Image
               source={{
-                uri: `file://${RNFS.DocumentDirectoryPath}/photos/${
-                  photo.filename
-                }`,
+                uri: `file://${RNFS.DocumentDirectoryPath}/photos/${photo.filename}`,
               }}
               style={styles.photo}
               resizeMode="cover"
@@ -280,4 +278,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect((state: state) => state.main)(MyCodeScreen);
+export default connect((state) => state)(MyCodeScreen);

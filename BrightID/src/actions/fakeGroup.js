@@ -30,7 +30,7 @@ export const fakeJoinGroup = ({
     timestamp,
   };
   console.log('====================', requestParams);
-  return api
+  return api.api
     .put(`/membership`, requestParams)
     .then((response) => ({
       success: response.status === 204,
@@ -51,7 +51,7 @@ export const fakeJoinGroups = ({
   id: string,
   secretKey: Uint8Array,
 }) => (dispatch: dispatch, getState: getState) => {
-  const { eligibleGroups } = getState().main;
+  const { eligibleGroups } = getState();
 
   eligibleGroups.map((group) =>
     fakeJoinGroup({ group: group.id, id, secretKey }),

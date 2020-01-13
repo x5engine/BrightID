@@ -7,7 +7,7 @@ export const shareConnection = async () => {
   try {
     const {
       connectQrData: { qrString },
-    } = store.getState().main;
+    } = store.getState();
     const result = await Share.share({
       message: qrString,
     });
@@ -21,7 +21,7 @@ export const shareConnection = async () => {
     } else if (result.action === Share.dismissedAction) {
       // dismissed
     }
-  } catch (error) {
-    alert(error.message);
+  } catch (err) {
+    err instanceof Error ? console.warn(err.message) : console.log(err);
   }
 };

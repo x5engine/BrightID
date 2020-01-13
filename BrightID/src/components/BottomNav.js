@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  */
 
 type Props = {
-  navigation: { navigate: () => null },
+  navigation: navigation,
   notifications: Array<NotificationInfo>,
 };
 
@@ -125,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect((state) => state.main)(BottomNav);
+export default connect((state) => state)(BottomNav);

@@ -33,7 +33,7 @@ type State = {
   connectionAttempts: number,
 };
 
-class ScanCodeScreen extends React.Component<Props, State> {
+export class ScanCodeScreen extends React.Component<Props, State> {
   textInput: null | TextInput;
 
   camera: null | RNCamera;
@@ -199,4 +199,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect((state) => state.main)(ScanCodeScreen);
+export default connect((state) => state)(ScanCodeScreen);

@@ -1,23 +1,6 @@
 // @flow
-import { AsyncStorage } from 'react-native';
-import { setApps, addApp, removeApp } from './index';
+import { addApp, removeApp } from './index';
 import { saveImage } from '../utils/filesystem';
-
-export const getApps = () => async (dispatch: dispatch) => {
-  try {
-    const allKeys = await AsyncStorage.getAllKeys();
-    const appKeys = allKeys.filter((key) => key.startsWith('App:'));
-    const appValues = await AsyncStorage.multiGet(appKeys);
-    // see https://facebook.github.io/react-native/docs/asyncstorage#multiget
-    const appInfos = appValues
-      .map((val) => JSON.parse(val[1]))
-      .sort((a, b) => b.dateAdded - a.dateAdded);
-
-    dispatch(setApps(appInfos));
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 type ContextInfo = {
   appLogo: string,
@@ -28,7 +11,7 @@ type ContextInfo = {
 export const saveApp = (name: string, contextInfo: ContextInfo) => async (
   dispatch: dispatch,
 ) => {
-  let logoFile;
+  let logoFile = '';
   try {
     if (contextInfo.appLogo) {
       logoFile = await saveImage({
@@ -45,8 +28,6 @@ export const saveApp = (name: string, contextInfo: ContextInfo) => async (
       dateAdded: Date.now(),
     };
 
-    await AsyncStorage.setItem(`App:${name}`, JSON.stringify(appInfo));
-
     return dispatch(addApp(appInfo));
   } catch (err) {
     console.log(err);
@@ -54,6 +35,5 @@ export const saveApp = (name: string, contextInfo: ContextInfo) => async (
 };
 
 export const deleteApp = (name: string) => async (dispatch: dispatch) => {
-  AsyncStorage.removeItem(`App:${name}`);
   dispatch(removeApp(name));
 };

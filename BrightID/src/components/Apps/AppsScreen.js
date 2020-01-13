@@ -3,20 +3,20 @@
 import * as React from 'react';
 import { StyleSheet, View, Alert, FlatList } from 'react-native';
 import { connect } from 'react-redux';
-import { saveApp, getApps } from '../../actions/apps';
+import { saveApp } from '../../actions/apps';
 import BottomNav from '../BottomNav';
 
 import api from '../../Api/BrightId';
 import AppCard from './AppCard';
 
-class AppsScreen extends React.Component<Props> {
+export class AppsScreen extends React.Component<Props> {
   static navigationOptions = () => ({
     title: 'Apps',
-    headerRight: <View />,
+    headerRight: () => <View />,
   });
 
   async componentDidMount() {
-    const { navigation, dispatch } = this.props;
+    const { navigation } = this.props;
 
     if (navigation.state.params) {
       // if 'params' is defined, the user came through a deep link
@@ -55,7 +55,6 @@ class AppsScreen extends React.Component<Props> {
         navigation.goBack();
       }
     }
-    dispatch(getApps());
   }
 
   render() {
@@ -124,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect((state) => state.main)(AppsScreen);
+export default connect((state) => state)(AppsScreen);

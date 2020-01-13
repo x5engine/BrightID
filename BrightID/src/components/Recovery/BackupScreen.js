@@ -15,7 +15,6 @@ import {
 import Spinner from 'react-native-spinkit';
 import { connect } from 'react-redux';
 import { setBackupCompleted, setPassword } from '../../actions/index';
-import { getNotifications } from '../../actions/notifications';
 import emitter from '../../emitter';
 
 import { backupAppData } from './helpers';
@@ -88,7 +87,6 @@ class BackupScreen extends React.Component<Props, State> {
       });
 
       dispatch(setBackupCompleted(true));
-      dispatch(getNotifications());
 
       Alert.alert('Info', 'Backup completed successfully!', [
         { text: 'OK', onPress: () => navigation.navigate('Home') },
@@ -238,4 +236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect((state) => state.main)(BackupScreen);
+export default connect((state) => state)(BackupScreen);

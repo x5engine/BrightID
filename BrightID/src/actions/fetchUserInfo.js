@@ -7,8 +7,10 @@ import {
   setGroupsCount,
   setUserScore,
   setVerifications,
+  updateConnectionScores,
 } from './index';
 
+// TODO update connections here
 const fetchUserInfo = () => async (dispatch: dispatch) => {
   try {
     const {
@@ -23,6 +25,7 @@ const fetchUserInfo = () => async (dispatch: dispatch) => {
     dispatch(setUserScore(__DEV__ ? 100 : score));
     dispatch(setGroupsCount(currentGroups.length));
     dispatch(setVerifications(verifications));
+    dispatch(updateConnectionScores(connections));
   } catch (err) {
     console.log(err);
   }

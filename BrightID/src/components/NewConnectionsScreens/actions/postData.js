@@ -4,7 +4,7 @@ export const postData = (data: string) => async (
   _: dispatch,
   getState: getState,
 ) => {
-  let { ipAddress, uuid, user } = getState().main.connectQrData;
+  let { ipAddress, uuid, user } = getState().connectQrData;
 
   fetch(`http://${ipAddress}/profile/upload`, {
     method: 'POST', // or 'PUT'
@@ -19,6 +19,6 @@ export const postData = (data: string) => async (
       }
     })
     .catch((err) => {
-      console.log(err);
+      err instanceof Error ? console.warn(err.message) : console.log(err);
     });
 };
