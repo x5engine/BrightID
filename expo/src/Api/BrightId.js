@@ -145,6 +145,11 @@ class BrightId {
     let sig = uInt8ArrayToB64(
       nacl.sign.detached(strToUint8Array(message), secretKey),
     );
+    console.log('sig', sig);
+    console.log(
+      'nacl sign detached',
+      nacl.sign.detached(strToUint8Array(message), secretKey),
+    );
     const res = await this.api.post(`/fetchUserInfo`, { id, sig, timestamp });
     BrightId.throwOnError(res);
     return res.data.data;

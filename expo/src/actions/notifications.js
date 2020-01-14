@@ -18,6 +18,8 @@ export const getNotifications = () => async (
     }
     dispatch(setNotifications(notifications));
   } catch (err) {
-    console.log(err);
+    err instanceof Error
+      ? console.warn('getNotifications', err.message)
+      : console.log('getNotifications', err);
   }
 };

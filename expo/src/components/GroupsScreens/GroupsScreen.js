@@ -68,7 +68,7 @@ export class GroupsScreen extends React.Component<Props, State> {
         currentGroups.length > 2
           ? splitEvery(2, currentGroups)
           : [currentGroups];
-      console.log(groupPairs);
+      console.log('groupPairs', groupPairs);
       return (
         <View style={styles.container}>
           <View style={styles.mainContainer}>

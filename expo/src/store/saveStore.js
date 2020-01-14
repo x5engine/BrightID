@@ -9,6 +9,8 @@ export const saveStore = async () => {
     const data = JSON.stringify(store.getState());
     await AsyncStorage.setItem('store@v1', data);
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('saveStore', err.message)
+      : console.log('saveStore', err);
   }
 };

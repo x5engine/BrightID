@@ -21,7 +21,6 @@ import { toggleNewGroupCoFounder } from './actions';
 
 class NewGroupCard extends React.PureComponent<Props> {
   handleGroupSelect = () => {
-    console.log('pressed');
     let { toggleCoFounder, id } = this.props;
     toggleCoFounder(id);
   };

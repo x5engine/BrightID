@@ -39,7 +39,7 @@ export const fakeJoinGroup = ({
       data: response.data,
     }))
     .then((data) => {
-      console.log(data);
+      console.log('fakeJoinGroup data', data);
     })
     .catch((error) => (error.data ? error.data : error));
 };

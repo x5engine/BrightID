@@ -94,12 +94,12 @@ export class MyCodeScreen extends React.Component<Props, State> {
   };
 
   handleQrString = (err, qr) => {
-    if (err) return console.log(err);
+    if (err) return console.log('handleQrString', err);
     parseString(qr, this.parseQrString);
   };
 
   parseQrString = (err, qrsvg) => {
-    if (err) return console.log(err);
+    if (err) return console.log('parseQRString', err);
     this.setState({ qrsvg });
   };
 

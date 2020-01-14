@@ -76,7 +76,9 @@ export class NewGroupScreen extends React.Component<Props, State> {
                 let result = await store.dispatch(createNewGroup());
                 if (result) navigation.goBack();
               } catch (err) {
-                console.log(err);
+                err instanceof Error
+                  ? console.warn('createNewGroup', err.message)
+                  : console.log('createNewGroup', err);
               }
             }}
             style={styles.createGroupButton}

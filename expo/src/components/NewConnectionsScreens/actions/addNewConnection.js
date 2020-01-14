@@ -66,6 +66,8 @@ export const addNewConnection = () => async (
     // and then we get an error in saving the backup, user will not solve
     // the issue by making the connection again.
   } catch (err) {
-    console.log(err);
+    err instanceof Error
+      ? console.warn('addNewConnection', err.message)
+      : console.log('addNewConnection', err);
   }
 };

@@ -10,9 +10,6 @@ export const NoEligibleGroups = ({ navigation }: Props) => (
         source={require('../../static/groups_logo.png')}
         style={styles.smallGroupsLogo}
         resizeMode="cover"
-        onError={(e) => {
-          console.log(e);
-        }}
         accessible={true}
         accessibilityLabel="groups logo"
       />
@@ -48,9 +45,6 @@ export const NoCurrentGroups = ({ navigation }: Props) => (
         source={require('../../static/groups_logo.png')}
         style={styles.smallGroupsLogo}
         resizeMode="cover"
-        onError={(e) => {
-          console.log(e);
-        }}
         accessible={true}
         accessibilityLabel="groups logo"
       />
@@ -87,9 +81,6 @@ export const EmptyFullScreen = ({ navigation }: Props) => (
         source={require('../../static/groups.png')}
         style={styles.largeGroupsLogo}
         resizeMode="cover"
-        onError={(e) => {
-          console.log(e);
-        }}
         accessible={true}
         accessibilityLabel="groups logo"
       />

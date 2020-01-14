@@ -28,7 +28,9 @@ export const bootstrapV0 = async (navigation: navigation) => {
       throw new Error('unable to recover user data');
     }
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('bootstrapV0', err.message)
+      : console.log('bootstrapV0', err);
     throw new Error('unable to recover user data');
   }
 };
@@ -50,7 +52,9 @@ export const getConnections = async (allKeys: string[]) => {
 
     // sort connections
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('getConnections', err.message)
+      : console.log('getConnections', err);
     throw new Error('unable to recover connections');
   }
 };
@@ -66,7 +70,9 @@ export const getApps = async (allKeys: string[]) => {
 
     store.dispatch(setApps(appInfos));
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('getApps', err.message)
+      : console.log('getApps', err);
     throw new Error('unable to recover apps');
   }
 };
@@ -94,7 +100,9 @@ export const verifyConnections = async (allKeys: string[]) => {
       JSON.stringify(connectionKeys) === JSON.stringify(reduxConnectionKeys)
     );
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('verifyConnections', err.message)
+      : console.log('verifyConnections', err);
     throw new Error('unable to verify connections');
   }
 };
@@ -111,7 +119,9 @@ export const verifyApps = async (allKeys: string[]) => {
     console.log(JSON.stringify(appInfos), JSON.stringify(apps));
     return JSON.stringify(appInfos) === JSON.stringify(apps);
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('verifyApps', err.message)
+      : console.log('verifyApps', err);
     throw new Error('unable to verify apps');
   }
 };
@@ -142,7 +152,9 @@ export const verifyUserData = async () => {
       throw new Error('unable to verify user data');
     }
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('verifyUserData', err.message)
+      : console.log('verifyUserData', err);
     throw new Error('unable to verify user data');
   }
 };

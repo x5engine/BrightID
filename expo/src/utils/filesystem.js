@@ -15,7 +15,9 @@ export const createImageDirectory = async () => {
     });
     return 'success';
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('createImageDirectory', err.message)
+      : console.log('createImageDirectory', err);
   }
 };
 
@@ -26,7 +28,9 @@ export const saveImage = async ({ base64Image, imageName }) => {
     await writeAsStringAsync(path, image, { encoding: EncodingType.Base64 });
     return `${imageName}.${filetype}`;
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('saveImage', err.message)
+      : console.log('saveImage', err);
   }
 };
 
@@ -39,6 +43,8 @@ export const retrieveImage = async (filename) => {
     );
     return `data:${mime};base64,${base64Image}`;
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('retrieveImage', err.message)
+      : console.log('retrieveImage', err);
   }
 };

@@ -52,7 +52,9 @@ export class HomeScreen extends React.Component<Props> {
                       await AsyncStorage.clear();
                       store.dispatch(resetStore());
                     } catch (err) {
-                      console.log(err);
+                      err instanceof Error
+                        ? console.warn('delete storage', err.message)
+                        : console.log('delete storage', err);
                     }
                   },
                 },
@@ -100,9 +102,6 @@ export class HomeScreen extends React.Component<Props> {
               }}
               style={styles.photo}
               resizeMode="cover"
-              onError={(e) => {
-                console.log(e.error);
-              }}
               accessible={true}
               accessibilityLabel="user photo"
             />

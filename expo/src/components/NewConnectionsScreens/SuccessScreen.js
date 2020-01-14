@@ -29,9 +29,6 @@ export class SuccessScreen extends React.Component<Props, State> {
             source={require('../../static/success.png')}
             style={styles.successImage}
             resizeMode="cover"
-            onError={(e) => {
-              console.log(e);
-            }}
             accessible={true}
             accessibilityLabel="success image"
           />

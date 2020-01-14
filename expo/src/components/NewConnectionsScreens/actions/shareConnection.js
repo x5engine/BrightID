@@ -22,6 +22,8 @@ export const shareConnection = async () => {
       // dismissed
     }
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('shareConnection', err.message)
+      : console.log('shareConnection', err);
   }
 };

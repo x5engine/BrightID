@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 import api from '../../../Api/BrightId';
 import { b64ToUrlSafeB64 } from '../../../utils/encoding';
 import { setConnectQrData } from '../../../actions';
+import { Buffer } from 'buffer';
 
 export const genQrData = () => async (dispatch: dispatch) => {
   try {
@@ -25,6 +26,8 @@ export const genQrData = () => async (dispatch: dispatch) => {
 
     dispatch(setConnectQrData(dataObj));
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('genQrData', err.message)
+      : console.log('genQrData', err);
   }
 };

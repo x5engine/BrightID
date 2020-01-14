@@ -29,7 +29,7 @@ import { fakeJoinGroups } from '../../actions/fakeGroup';
 class CofounderCard extends React.PureComponent<Props> {
   handleUserOptions = () => {
     const { name, id, secretKey, dispatch } = this.props;
-    console.log(secretKey);
+    console.log('secretKey', secretKey);
     const buttons = [
       {
         text: 'Cancel',

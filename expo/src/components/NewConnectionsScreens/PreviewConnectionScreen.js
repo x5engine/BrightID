@@ -44,9 +44,6 @@ export class PreviewConnectionScreen extends React.Component<Props, State> {
             source={image}
             style={styles.photo}
             resizeMode="cover"
-            onError={(e) => {
-              console.log(e);
-            }}
             accessible={true}
             accessibilityLabel="user photo"
           />

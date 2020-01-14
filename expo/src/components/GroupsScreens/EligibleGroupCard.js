@@ -69,7 +69,7 @@ class EligibleGroupCard extends React.Component<Props> {
 
   render() {
     const { group, navigation } = this.props;
-    console.log(group);
+    console.log('group', group);
     const groupNameAndScore = (
       <View style={styles.info}>
         <Text style={styles.names}>{getGroupName(group)}</Text>

@@ -27,7 +27,7 @@ export class AppsScreen extends React.Component<Props> {
         api.baseUrl = baseUrl;
         contextInfo = await api.getContext(context);
       } catch (e) {
-        console.log(e);
+        console.log('AppsScreen', e);
       } finally {
         api.baseUrl = oldBaseUrl;
       }

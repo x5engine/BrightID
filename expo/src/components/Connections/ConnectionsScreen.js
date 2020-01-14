@@ -49,7 +49,7 @@ export class ConnectionsScreen extends React.Component<Props, State> {
       const { dispatch } = this.props;
       const res = await api.deleteConnection(id);
       // TODO - only delete connection if verified on the backend
-      console.log(res);
+      console.log('removeConnection', res);
       // remove connection from redux
       dispatch(removeConnection(id));
     } catch (err) {

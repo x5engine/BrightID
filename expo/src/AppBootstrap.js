@@ -20,7 +20,9 @@ export default class AppBootstrap extends React.Component<Props> {
       // once everything is set up
       this.props.navigation.navigate(publicKey ? 'App' : 'Onboarding');
     } catch (err) {
-      console.log(err);
+      err instanceof Error
+        ? console.warn('bootstrap', err.message)
+        : console.log('bootstrap', err);
     }
   };
 

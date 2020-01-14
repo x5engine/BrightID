@@ -16,6 +16,8 @@ export const hydrateStore = async () => {
     }
   } catch (err) {
     Alert.alert('Redux Store did not load properly');
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('hydrateStore', err.message)
+      : console.log('hydrateStore', err);
   }
 };

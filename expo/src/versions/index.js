@@ -18,7 +18,7 @@ import { bootstrapV1 } from './v1';
 export const bootstrapAndUpgrade = async () => {
   try {
     const allKeys = await AsyncStorage.getAllKeys();
-    console.log(allKeys);
+    console.log('allKeys', allKeys);
     const v1 = isV1(allKeys);
     if (v1) {
       await bootstrapV1();
@@ -43,7 +43,9 @@ export const bootstrapAndUpgrade = async () => {
       }
     }
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('bootstrapAndUpgrade', err.message)
+      : console.log('bootstrapAndUpgrade', err);
   }
 };
 

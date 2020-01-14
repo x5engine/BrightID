@@ -89,7 +89,9 @@ class RestoreScreen extends React.Component<Props, State> {
       })
       .catch((err) => {
         this.resetState();
-        err instanceof Error ? console.warn(err.message) : console.log(err);
+        err instanceof Error
+          ? console.warn('restore', err.message)
+          : console.log('restore', err);
         if (err instanceof Error && err.message === 'bad sigs') {
           Alert.alert(
             'Uh Oh',

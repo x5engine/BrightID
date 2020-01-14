@@ -43,7 +43,9 @@ export const handleBrightIdCreation = ({
     // // navigate to home page
     return true;
   } catch (err) {
-    err instanceof Error ? console.warn(err.message) : console.log(err);
+    err instanceof Error
+      ? console.warn('handleBrightIdCreation', err.message)
+      : console.log('handleBrightIdCreation', err);
   }
 };
 
