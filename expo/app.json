@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "BrightID",
+    "slug": "BrightID",
+    "privacy": "public",
+    "sdkVersion": "36.0.0",
+    "platforms": ["ios", "android", "web"],
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 90000
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "org.brightid.demo"
+    },
+    "android": {
+      "package": "org.brightid.demo"
+    },
+    "githubUrl": "https://github.com/BrightID/BrightID"
+  }
+}

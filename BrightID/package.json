@@ -34,7 +34,7 @@
     "emittery": "^0.4.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
-    "events": "^1.0.0",
+    "events": "^3.1.0",
     "https-browserify": "~0.0.0",
     "moment": "^2.22.2",
     "path-browserify": "0.0.0",
