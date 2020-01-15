@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 // import Spinner from 'react-native-spinkit';
-import store from './store';
+import { store } from './store';
 import { bootstrapAndUpgrade } from './versions';
 
 export default class AppBootstrap extends React.Component<Props> {

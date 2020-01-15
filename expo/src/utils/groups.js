@@ -1,4 +1,4 @@
-import store from '../store';
+import { store } from '../store';
 
 const memberList = (group) => {
   const { id, photo, name, connections } = store.getState();

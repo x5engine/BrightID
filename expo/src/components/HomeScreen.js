@@ -16,7 +16,7 @@ import Material from 'react-native-vector-icons/MaterialCommunityIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import VerificationSticker from './Verifications/VerificationSticker';
 import BottomNav from './BottomNav';
-import store from '../store';
+import { store } from '../store';
 import { resetStore } from '../actions';
 import { getNotifications } from '../actions/notifications';
 

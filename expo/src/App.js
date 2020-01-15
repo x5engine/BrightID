@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 
 import AppRoutes from './AppRoutes';
-import store from './store';
+import { store } from './store';
 
 /**
  * Central part of the application

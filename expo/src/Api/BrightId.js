@@ -2,8 +2,12 @@
 
 import { create, ApiSauceInstance } from 'apisauce';
 import nacl from 'tweetnacl';
-import { strToUint8Array, uInt8ArrayToB64 } from '../utils/encoding';
-import store from '../store';
+import {
+  strToUint8Array,
+  uInt8ArrayToB64,
+  b64ToUint8Array,
+} from '../utils/encoding';
+import { store } from '../store';
 
 // let seedUrl = 'http://node.brightid.org';
 // if (__DEV__) {
@@ -139,15 +143,10 @@ class BrightId {
   }
 
   async getUserInfo() {
-    let { id, secretKey } = store.getState();
+    let { id, publicKey, secretKey } = store.getState();
     let timestamp = Date.now();
     let message = id + timestamp;
     let sig = uInt8ArrayToB64(
-      nacl.sign.detached(strToUint8Array(message), secretKey),
-    );
-    console.log('sig', sig);
-    console.log(
-      'nacl sign detached',
       nacl.sign.detached(strToUint8Array(message), secretKey),
     );
     const res = await this.api.post(`/fetchUserInfo`, { id, sig, timestamp });

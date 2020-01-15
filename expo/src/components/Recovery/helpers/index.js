@@ -2,11 +2,12 @@
 
 import { Alert } from 'react-native';
 // import { createCipher, createDecipher } from 'react-native-crypto';
+import aesjs, { ModeOfOperation } from 'aes-js';
 import nacl from 'tweetnacl';
 import { retrieveImage, saveImage } from '../../../utils/filesystem';
 import backupApi from '../../../Api/BackupApi';
 import api from '../../../Api/BrightId';
-import store from '../../../store';
+import { store } from '../../../store';
 import emitter from '../../../emitter';
 import {
   setRecoveryData,
@@ -36,8 +37,10 @@ export const setTrusted = async () => {
 };
 
 const hashId = (id: string, password: string) => {
-  const cipher = createCipher('aes128', password);
-  const hash = cipher.update(id, 'utf8', 'base64') + cipher.final('base64');
+  // const cipher = createCipher('aes128', password);
+  // const hash = cipher.update(id, 'utf8', 'base64') + cipher.final('base64');
+  // const hash = encrypt(id, password);
+  console.log('hash', hash);
   const safeHash = b64ToUrlSafeB64(hash);
   store.dispatch(setHashedId(safeHash));
   return safeHash;
@@ -47,9 +50,9 @@ export const encryptAndBackup = async (key: string, data: string) => {
   let { id, hashedId, password } = store.getState();
   if (!hashedId) hashedId = hashId(id, password);
   try {
-    const cipher = createCipher('aes128', password);
-    const encrypted =
-      cipher.update(data, 'utf8', 'base64') + cipher.final('base64');
+    // const cipher = createCipher('aes128', password);
+    // const encrypted =
+    //   cipher.update(data, 'utf8', 'base64') + cipher.final('base64');
     await backupApi.putRecovery(hashedId, key, encrypted);
     emitter.emit('backupProgress', 1);
   } catch (err) {
@@ -117,13 +120,13 @@ export const backupAppData = async () => {
   }
 };
 
-export const setupRecovery = () => {
+export const setupRecovery = async () => {
   let { recoveryData } = store.getState();
   recoveryData.sigs = [];
   store.dispatch(setRecoveryData(recoveryData));
   if (recoveryData.timestamp) return;
 
-  const { publicKey, secretKey } = nacl.sign.keyPair();
+  const { publicKey, secretKey } = await nacl.sign.keyPair();
   recoveryData = {
     publicKey: uInt8ArrayToB64(publicKey),
     secretKey: uInt8ArrayToB64(secretKey),

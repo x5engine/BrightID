@@ -1,7 +1,7 @@
 // @flow
 
 // import { createCipher } from 'react-native-crypto';
-import { encrypt } from 'aes-everywhere';
+import aesjs, { ModeOfOperation } from 'aes-js';
 import nacl from 'tweetnacl';
 import { postData } from './postData';
 import { retrieveImage } from '../../../utils/filesystem';
@@ -54,9 +54,12 @@ export const encryptAndUploadLocalData = () => async (
 
     // let encrypted =
     //   cipher.update(dataStr, 'utf8', 'base64') + cipher.final('base64');
+    const key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+    const aesCtr = new ModeOfOperation.ctr(key);
+    const dataBytes = aesjs.utils.utf8.toBytes(dataStr);
+    const encryptedBytes = aesCtr.encrypt(dataBytes);
 
-    const encrypted = encrypt(dataStr, aesKey);
-    dispatch(postData(encrypted));
+    dispatch(postData(uInt8ArrayToB64(encryptedBytes)));
   } catch (err) {
     err instanceof Error
       ? console.warn('encryptAndUploadLocalData', err.message)

@@ -7,7 +7,7 @@ import { NavigationEvents } from 'react-navigation';
 
 import SearchConnections from '../Connections/SearchConnections';
 import NewGroupCard from './NewGroupCard';
-import store from '../../store';
+import { store } from '../../store';
 import { createNewGroup } from './actions';
 import { renderListOrSpinner } from '../Connections/renderConnections';
 import { clearNewGroupCoFounders } from '../../actions/index';

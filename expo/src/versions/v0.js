@@ -12,7 +12,7 @@ import {
 
 import { defaultSort } from '../components/Connections/sortingUtility';
 
-import store from '../store';
+import { store } from '../store';
 
 export const bootstrapV0 = async (navigation: navigation) => {
   try {

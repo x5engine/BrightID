@@ -2,7 +2,7 @@
 
 import { create, ApiSauceInstance, ApiResponse } from 'apisauce';
 import { b64ToUrlSafeB64 } from '../utils/encoding';
-import store from '../store';
+import { store } from '../store';
 
 let recoveryUrl = 'https://recovery.brightid.org';
 // let seedUrl = 'http://node.brightid.org';

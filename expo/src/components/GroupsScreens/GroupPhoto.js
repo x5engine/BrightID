@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { documentDirectory } from 'expo-file-system';
 import { groupCirclePhotos } from '../../utils/groups';
 
-class GroupPhoto extends React.Component {
+class GroupPhoto extends React.Component<Props> {
   photoStyle(photo) {
     const { radius = 20 } = this.props;
     const style = { ...styles.photo };

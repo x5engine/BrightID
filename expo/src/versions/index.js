@@ -1,8 +1,8 @@
 // @flow
 
 import { Alert, AsyncStorage } from 'react-native';
-import { saveStore } from '../store/saveStore';
-import store from '../store';
+import { saveStore } from '../store';
+import { store } from '../store';
 import fetchUserInfo from '../actions/fetchUserInfo';
 import {
   bootstrapV0,

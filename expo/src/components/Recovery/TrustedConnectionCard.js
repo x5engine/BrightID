@@ -10,7 +10,7 @@ import {
   addTrustedConnection,
   removeTrustedConnection,
 } from '../../actions/index';
-import store from '../../store';
+import { store } from '../../store';
 
 class TrustedConnectionCard extends React.PureComponent<Props> {
   toggleConnectionSelect = () => {

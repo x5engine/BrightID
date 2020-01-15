@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import { objToUint8 } from '../../utils/encoding';
 import { bootstrapAndUpgrade } from '../index';
-import store from '../../store';
+import { store } from '../../store';
 
 test('v0 bootstrap', async () => {
   expect.assertions(2);

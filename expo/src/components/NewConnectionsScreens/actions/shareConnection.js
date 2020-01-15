@@ -1,7 +1,7 @@
 // @flow
 
 import { Share } from 'react-native';
-import store from '../../../store';
+import { store } from '../../../store';
 
 export const shareConnection = async () => {
   try {
