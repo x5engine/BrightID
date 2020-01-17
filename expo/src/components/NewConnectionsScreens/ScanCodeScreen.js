@@ -37,7 +37,7 @@ type State = {
 export class ScanCodeScreen extends React.Component<Props, State> {
   textInput: null | TextInput;
 
-  camera: null | RNCamera;
+  camera: null;
 
   state = {
     scanned: false,
@@ -76,7 +76,7 @@ export class ScanCodeScreen extends React.Component<Props, State> {
 
   handleBarCodeRead = ({ data }) => {
     const { dispatch, navigation } = this.props;
-
+    console.log('handle barcode read');
     if (data.startsWith('Recovery_')) {
       navigation.navigate('RecoveringConnection', {
         recoveryRequestCode: data,

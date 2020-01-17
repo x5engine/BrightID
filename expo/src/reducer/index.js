@@ -83,7 +83,7 @@ export const initialState: State = {
   secretKey: new Uint8Array([]),
   connectionsSort: '',
   connectQrData: {
-    aesKey: '',
+    aesKey: new Uint8Array([]),
     ipAddress: '',
     uuid: '',
     user: '',
@@ -286,7 +286,7 @@ export const reducer = (state: State = initialState, action: action) => {
       return {
         ...state,
         connectQrData: {
-          aesKey: '',
+          aesKey: new Uint8Array([]),
           ipAddress: '',
           uuid: '',
           user: '',

@@ -6,8 +6,7 @@ import { b64ToUint8Array } from '../../../utils/encoding';
 export const parseQrData = (qrString: string) => (dispatch: dispatch) => {
   const aesKey64 = qrString.substr(0, 24);
   const aesKey = b64ToUint8Array(aesKey64);
-  const uuid64 = qrString.substr(24, 12);
-  const uuid = b64ToUint8Array(uuid64);
+  const uuid = qrString.substr(24, 12);
   const b64ip = `${qrString.substr(36, 6)}==`;
   const ipAddress = b64ToUint8Array(b64ip).join('.');
 

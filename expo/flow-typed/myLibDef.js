@@ -28,7 +28,7 @@ declare type State = {
   secretKey: Uint8Array,
   connectionsSort: string,
   connectQrData: {
-    aesKey: string,
+    aesKey: Uint8Array,
     ipAddress: string,
     uuid: string,
     user: string,

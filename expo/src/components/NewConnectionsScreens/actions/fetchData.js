@@ -12,13 +12,16 @@ export const fetchData = (alertErrors = true) => (
 
   console.log(`fetching data for channel ${channel}`);
 
-  const url = `http://${ipAddress}/profile/download/${channel}`;
+  const url = `https://${ipAddress}/profile/download/${channel}`;
 
   let response;
+
+  console.log('url', url);
 
   fetch(url)
     .then(async (res) => {
       response = await res;
+      console.log('response', response);
       if (response.ok) {
         return res.json();
       } else {
@@ -31,6 +34,7 @@ export const fetchData = (alertErrors = true) => (
     .then((data) => {
       if (data && data.data) {
         response.profileData = data.data;
+        console.log('data', response.profileData);
         dispatch(decryptData(data.data));
       } else {
         emitter.emit('profileNotReady');
@@ -43,6 +47,7 @@ export const fetchData = (alertErrors = true) => (
       Stack trace: ${err.stack}`;
         Alert.alert(err.message || 'Error', message);
       }
+      err instanceof Error ? console.warn(err.message) : console.log(err);
       emitter.emit('connectFailure');
     });
 };

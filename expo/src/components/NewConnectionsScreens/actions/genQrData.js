@@ -27,7 +27,7 @@ export const genQrData = () => async (dispatch: dispatch) => {
     const qrString = `${aesKey64}${uuid64}${b64Ip}`;
     const user = '1';
 
-    const dataObj = { aesKey, uuid, ipAddress, user, qrString };
+    const dataObj = { aesKey, uuid: uuid64, ipAddress, user, qrString };
     console.log('genQrCodeData', dataObj);
 
     dispatch(setConnectQrData(dataObj));
