@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import * as Font from 'expo-font';
+import './patches/engineIoHeadWarning';
 import App from './src/App';
 
 export default class Main extends React.Component {

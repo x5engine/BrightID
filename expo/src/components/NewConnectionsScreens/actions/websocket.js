@@ -8,7 +8,7 @@ export const setUpWs = () => (dispatch: dispatch, getState: () => State) => {
   try {
     const { ipAddress, channel } = getState().connectQrData;
 
-    const socket = io.connect(`http://${ipAddress}`);
+    const socket = io(`http://${ipAddress}`);
 
     socket.emit('join', channel);
 

@@ -3,7 +3,11 @@
 import { getRandomBytesAsync } from 'expo-random';
 import { Alert } from 'react-native';
 import api from '../../../Api/BrightId';
-import { b64ToUrlSafeB64, uInt8ArrayToB64 } from '../../../utils/encoding';
+import {
+  b64ToUrlSafeB64,
+  uInt8ArrayToB64,
+  b64ToUint8Array,
+} from '../../../utils/encoding';
 import { setConnectQrData } from '../../../actions';
 import { Buffer } from 'buffer';
 
@@ -17,17 +21,14 @@ export const genQrData = () => async (dispatch: dispatch) => {
       .toString('base64')
       .substring(0, 6);
     const aesKey = await getRandomBytesAsync(16);
-    const aesKey64 = b64ToUrlSafeB64(uInt8ArrayToB64(aesKey));
+    const aesKey64 = uInt8ArrayToB64(aesKey);
     const uuid = await getRandomBytesAsync(9);
-    const uuid64 = b64ToUrlSafeB64(uInt8ArrayToB64(uuid));
-    console.log('aesKey', aesKey);
-    console.log('uuidKey', uuid);
-    console.log('aesKey64', aesKey64);
-    console.log('uuidKey64', uuid64);
+    const uuid64 = uInt8ArrayToB64(uuid);
     const qrString = `${aesKey64}${uuid64}${b64Ip}`;
     const user = '1';
 
     const dataObj = { aesKey, uuid, ipAddress, user, qrString };
+    console.log('genQrCodeData', dataObj);
 
     dispatch(setConnectQrData(dataObj));
   } catch (err) {
