@@ -14,23 +14,23 @@ import {
   View,
 } from 'react-native';
 import {
-  requestCameraPermissionsAsync,
-  requestCameraRollPermissionsAsync,
   launchImageLibraryAsync,
   launchCameraAsync,
+  MediaTypeOptions,
+  requestCameraRollPermissionsAsync,
+  requestCameraPermissionsAsync,
 } from 'expo-image-picker';
-import Constants from 'expo-constants';
-// import Spinner from "react-native-spinkit";
 import { connect } from 'react-redux';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { Ionicons } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
 import { handleBrightIdCreation, fakeUserAvatar } from './actions';
 import { mimeFromUri } from '../../utils/images';
+import ResizeImage from '../../utils/ResizeImage';
 
 type State = {
   name: string,
-  imagePicking: boolean,
-  photo: { uri: string },
+  initialPhoto: { uri: string },
+  finalBase64: { uri: string },
   creatingBrightId: boolean,
 };
 
@@ -48,149 +48,111 @@ export class SignUp extends React.Component<Props, State> {
 
   state = {
     name: '',
-    photo: { uri: '' },
-    imagePicking: false,
+    initialPhoto: { uri: '' },
+    finalBase64: { uri: '' },
     creatingBrightId: false,
-  };
-
-  componentDidMount() {
-    this.getPermissionAsync();
-  }
-
-  getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await requestCameraRollPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
-      }
-    }
-  };
-
-  imagePickingFalse = () => {
-    setTimeout(() => this.setState({ imagePicking: false }), 201);
-  };
-
-  imagePickingTrue = () => {
-    setTimeout(() => this.setState({ imagePicking: true }), 200);
   };
 
   randomAvatar = async (): Promise<void> => {
     try {
       const randomImage: string = await fakeUserAvatar();
-      const photo = { uri: `data:image/jpeg;base64,${randomImage}` };
-      this.setState({ photo });
-      this.imagePickingFalse();
+      const initialPhoto = {
+        uri: `data:image/jpeg;base64,${randomImage}`,
+      };
+      this.setState({ initialPhoto });
     } catch (err) {
-      console.log(err);
+      err instanceof Error ? console.warn(err.message) : console.log(err);
     }
   };
 
-  getPhoto = async () => {
-    // for full documentation on the Image Picker api
-    // see https://github.com/react-community/react-native-image-picker
+  choosePhotoFromLibrary = async () => {
+    const { status } = await requestCameraRollPermissionsAsync();
+    if (status !== 'granted') {
+      return Alert.alert(
+        'Please update camera roll permissions to select a profile photo',
+      );
+    }
+    const options = {
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: false,
+      mediaTypes: MediaTypeOptions.Images,
+    };
+
+    const res = await launchImageLibraryAsync(options);
+    if (res.cancelled) {
+      console.log('cancelled');
+    } else {
+      const initialPhoto = { uri: res.uri };
+      this.setState({ initialPhoto });
+    }
+  };
+
+  takePhoto = async () => {
+    const { status } = await requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      return Alert.alert(
+        'Please update camera permissions to take a profile photo',
+      );
+    }
 
     const options = {
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.8,
-      base64: true,
-      exif: true,
+      quality: 1,
+      base64: false,
+      mediaTypes: MediaTypeOptions.Images,
     };
 
-    // if (__DEV__) {
-    //   options.customButtons = [{ name: "random", title: "Random Avatar" }];
-    // }
-    // loading UI to account for the delay after picking an image
-
-    //  } else if (response.customButton) {
-    //   this.randomAvatar();
-
-    this.imagePickingTrue();
-
-    const res = await launchImageLibraryAsync(options);
+    const res = await launchCameraAsync(options);
     if (res.cancelled) {
-      this.imagePickingFalse();
+      console.log('cancelled');
     } else {
-      const mime = mimeFromUri(res.uri);
-      const photo = { uri: `data:image/jpeg;base64,${res.base64}` };
-      this.setState({ photo, imagePicking: false });
+      const initialPhoto = { uri: res.uri };
+      this.setState({ initialPhoto });
     }
+  };
+
+  resetPhoto = () => {
+    this.setState({
+      initialPhoto: { uri: '' },
+      finalBase64: { uri: '' },
+    });
   };
 
   createBrightID = async () => {
     try {
-      const { photo, name } = this.state;
+      const { finalBase64, name } = this.state;
       const { navigation, dispatch } = this.props;
       this.setState({ creatingBrightId: true });
       if (!name) {
         this.setState({ creatingBrightId: false });
         return Alert.alert('BrightID Form Incomplete', 'Please add your name');
       }
-      if (!photo) {
+      if (!finalBase64.uri) {
         this.setState({ creatingBrightId: false });
         return Alert.alert('BrightID Form Incomplete', 'A photo is required');
       }
       const result = await dispatch(
         handleBrightIdCreation({
-          photo,
+          base64Photo: finalBase64,
           name,
         }),
       );
-      if (result) {
-        navigation.navigate('App');
-      } else {
-        this.setState({ creatingBrightId: false });
-      }
+      navigation.navigate('App');
     } catch (err) {
+      err instanceof Error ? console.warn(err.message) : console.log(err);
       this.setState({ creatingBrightId: false });
     }
   };
 
-  renderButtonOrSpinner = () =>
-    !this.state.creatingBrightId ? (
-      <View>
-        <TouchableOpacity
-          style={styles.createBrightIdButton}
-          onPress={this.createBrightID}
-        >
-          <Text style={styles.buttonInnerText}>Create My BrightID</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate('RecoveryCode')}
-          style={styles.button}
-          accessibilityLabel="Recover BrightID"
-        >
-          <Text style={styles.buttonText}>Recover BrightID</Text>
-        </TouchableOpacity>
-      </View>
-    ) : (
-      <View style={styles.loader}>
-        <Text>Creating Bright ID...</Text>
-      </View>
-    );
+  onCapture = (uri: string) => {
+    this.setState({ finalBase64: { uri } });
+  };
 
   render() {
-    const { imagePicking, name, photo } = this.state;
-
-    const AddPhotoButton = photo.uri ? (
-      <TouchableOpacity
-        onPress={this.getPhoto}
-        accessible={true}
-        accessibilityLabel="edit photo"
-      >
-        <Image style={styles.photo} source={photo} onPress={this.getPhoto} />
-      </TouchableOpacity>
-    ) : (
-      <TouchableOpacity
-        onPress={this.getPhoto}
-        style={styles.addPhoto}
-        accessible={true}
-        accessibilityLabel="add photo"
-      >
-        <Text style={styles.addPhotoText}>Add Photo</Text>
-        <SimpleLineIcons size={48} name="camera" color="#979797" />
-      </TouchableOpacity>
-    );
+    const { name, initialPhoto, finalBase64 } = this.state;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -199,9 +161,41 @@ export class SignUp extends React.Component<Props, State> {
           backgroundColor={Platform.OS === 'ios' ? 'transparent' : '#000'}
           translucent={false}
         />
+        <ResizeImage
+          width={180}
+          height={180}
+          onCapture={this.onCapture}
+          uri={initialPhoto.uri}
+        />
         <View style={styles.addPhotoContainer}>
-          {!imagePicking ? AddPhotoButton : <View />}
+          {finalBase64.uri ? (
+            <TouchableOpacity
+              onPress={this.resetPhoto}
+              accessible={true}
+              accessibilityLabel="edit photo"
+            >
+              <Image style={styles.photo} source={finalBase64} />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.choosePhotoButtonContainer}>
+              <TouchableOpacity
+                onPress={this.takePhoto}
+                style={styles.choosePhotoButton}
+              >
+                <Text style={styles.choosePhotoButtonText}>Take Photo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={this.choosePhotoFromLibrary}
+                style={styles.choosePhotoButton}
+              >
+                <Text style={styles.choosePhotoButtonText}>
+                  Choose from Library
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
+
         <View style={styles.textInputContainer}>
           <Text style={styles.midText}>What do your friends know you by?</Text>
           <TextInput
@@ -225,7 +219,27 @@ export class SignUp extends React.Component<Props, State> {
             Your name and photo will never be shared with apps or stored on
             servers
           </Text>
-          {this.renderButtonOrSpinner()}
+          {!this.state.creatingBrightId ? (
+            <View>
+              <TouchableOpacity
+                style={styles.createBrightIdButton}
+                onPress={this.createBrightID}
+              >
+                <Text style={styles.buttonInnerText}>Create My BrightID</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('RecoveryCode')}
+                style={styles.button}
+                accessibilityLabel="Recover BrightID"
+              >
+                <Text style={styles.buttonText}>Recover BrightID</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.loader}>
+              <Text>Creating Bright ID...</Text>
+            </View>
+          )}
         </View>
       </KeyboardAvoidingView>
     );
@@ -255,15 +269,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
   },
-  addPhoto: {
-    borderWidth: 1,
-    borderColor: '#979797',
-    height: 180,
-    width: 180,
-    borderRadius: 90,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   photo: {
     width: 180,
     height: 180,
@@ -272,19 +277,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-  },
-  hidden: {
-    display: 'none',
-  },
-  addPhotoText: {
-    fontFamily: 'ApexNew-Book',
-    color: '#979797',
-    marginBottom: 11,
-    marginTop: 11,
-    fontSize: 18,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    letterSpacing: 0,
   },
   midText: {
     fontFamily: 'ApexNew-Book',
@@ -349,6 +341,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 22,
   },
+  choosePhotoButtonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  choosePhotoButton: {
+    backgroundColor: '#428BE5',
+    width: 140,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 9,
+    marginTop: 12,
+  },
+  choosePhotoButtonText: {
+    fontFamily: 'ApexNew-Medium',
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  profilePhotoTitle: {},
 });
 
 export default connect()(SignUp);

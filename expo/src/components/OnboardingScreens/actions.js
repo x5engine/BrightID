@@ -9,18 +9,25 @@ import { b64ToUrlSafeB64, uInt8ArrayToB64 } from '../../utils/encoding';
 
 export const handleBrightIdCreation = ({
   name,
-  photo,
+  base64Photo,
 }: {
   name: string,
-  photo: { uri: string },
+  base64Photo: { uri: string },
 }) => async (dispatch: dispatch) => {
   try {
     // create public / private key pair
     const { publicKey, secretKey } = await nacl.sign.keyPair();
+    // base64 the uintArray
     const b64PubKey = uInt8ArrayToB64(publicKey);
+    // brightid is urlsafe b64PubKey
     const id = b64ToUrlSafeB64(b64PubKey);
+    // create photo image directory
     await createImageDirectory();
-    const filename = await saveImage({ imageName: id, base64Image: photo.uri });
+
+    const filename = await saveImage({
+      imageName: id,
+      base64Image: base64Photo.uri,
+    });
 
     const userData = {
       publicKey: b64PubKey,
@@ -37,15 +44,8 @@ export const handleBrightIdCreation = ({
     await dispatch(setUserData(userData));
     // to fix bug while testing
     dispatch(setHashedId(''));
-
-    console.log('brightid creation success');
-
-    // // navigate to home page
-    return true;
   } catch (err) {
-    err instanceof Error
-      ? console.warn('handleBrightIdCreation', err.message)
-      : console.log('handleBrightIdCreation', err);
+    throw err;
   }
 };
 
