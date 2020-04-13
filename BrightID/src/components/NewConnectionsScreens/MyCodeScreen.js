@@ -44,19 +44,35 @@ type State = {
           },
         },
       },
+  timer: number,
 };
 
 const COPIED_TIMEOUT = 500;
+const QR_TTL = 900000;
 
 export class MyCodeScreen extends React.Component<Props, State> {
   connectionExpired: TimeoutID;
 
-  state = {
-    qrsvg: '',
-    copied: false,
-  };
+  fetchProfileData: IntervalID;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      qrsvg: '',
+      copied: false,
+      timer: QR_TTL,
+    };
+  }
 
   componentDidMount() {
+    this.initiateQrCodeGen();
+  }
+
+  componentWillUnmount() {
+    this.resetQrCode();
+  }
+
+  initiateQrCodeGen = () => {
     // After 2 minutes, connection attempts expire on the server.
     //  Let users start the connection over after one minute so there will be
     //  time for the other user to connect.
@@ -69,21 +85,25 @@ export class MyCodeScreen extends React.Component<Props, State> {
       this.genQrCode();
       dispatch(encryptAndUploadLocalData());
     });
-  }
+  };
 
-  componentWillUnmount() {
+  resetQrCode = () => {
     const { dispatch } = this.props;
     this.unsubscribeToProfileUpload();
     emitter.off('connectDataReady', this.navigateToPreview);
     emitter.off('recievedProfileData', this.unsubscribeToProfileUpload);
     dispatch(removeConnectQrData());
-  }
+    this.setState({ qrsvg: '', timer: QR_TTL });
+  };
 
   subscribeToProfileUpload = () => {
     const { dispatch } = this.props;
-    this.connectionExpired = setTimeout(this.navigateToHome, 60000);
+    this.connectionExpired = setTimeout(this.navigateToHome, QR_TTL);
     this.fetchProfileData = setInterval(() => {
       dispatch(fetchData());
+      this.setState((prevState) => ({
+        timer: prevState.timer - 1000,
+      }));
     }, 1000);
   };
 
@@ -100,6 +120,11 @@ export class MyCodeScreen extends React.Component<Props, State> {
     this.props.navigation.navigate('Home');
   };
 
+  onQrPress = () => {
+    this.resetQrCode();
+    this.initiateQrCodeGen();
+  };
+
   genQrCode = () => {
     const {
       connectQrData: { qrString },
@@ -107,14 +132,24 @@ export class MyCodeScreen extends React.Component<Props, State> {
     qrcode.toString(qrString, this.handleQrString);
   };
 
-  handleQrString = (err, qr) => {
+  handleQrString = (err: Error, qr: string) => {
     if (err) return console.log(err);
     parseString(qr, this.parseQrString);
   };
 
-  parseQrString = (err, qrsvg) => {
+  parseQrString = (err: Error, qrsvg: string) => {
     if (err) return console.log(err);
     this.setState({ qrsvg });
+  };
+
+  displayTime = () => {
+    const { timer } = this.state;
+    const minutes = Math.floor(timer / 60000);
+    let seconds = Math.trunc((timer % 60000) / 1000);
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+    return `${minutes}:${seconds}`;
   };
 
   copyQr = () => {
@@ -151,11 +186,18 @@ export class MyCodeScreen extends React.Component<Props, State> {
     </View>
   );
 
+  renderTimer = () => (
+    <View style={styles.timerContainer}>
+      <Text style={styles.timerTextLeft}>Expires in: </Text>
+      <Text style={styles.timerTextRight}>{this.displayTime()}</Text>
+    </View>
+  );
+
   renderQrCode = () => (
-    <View style={[styles.qrsvgContainer]}>
+    <TouchableOpacity style={[styles.qrsvgContainer]} onPress={this.onQrPress}>
       <Svg
-        height="212"
-        width="212"
+        height={DEVICE_TYPE === 'large' ? '190' : '135'}
+        width={DEVICE_TYPE === 'large' ? '190' : '135'}
         xmlns="http://www.w3.org/2000/svg"
         viewBox={path(['svg', '$', 'viewBox'], this.state.qrsvg)}
         shape-rendering="crispEdges"
@@ -169,7 +211,7 @@ export class MyCodeScreen extends React.Component<Props, State> {
           d={path(['svg', 'path', '1', '$', 'd'], this.state.qrsvg)}
         />
       </Svg>
-    </View>
+    </TouchableOpacity>
   );
 
   render() {
@@ -186,7 +228,10 @@ export class MyCodeScreen extends React.Component<Props, State> {
               name, your photo, your score
             </Text>
           </View>
-          <View style={styles.photoContainer}>
+          <TouchableOpacity
+            style={styles.photoContainer}
+            onPress={this.onQrPress}
+          >
             <Image
               source={{
                 uri: `file://${RNFS.DocumentDirectoryPath}/photos/${photo.filename}`,
@@ -200,9 +245,10 @@ export class MyCodeScreen extends React.Component<Props, State> {
               accessibilityLabel="user photo"
             />
             {DEVICE_TYPE === 'large' && <Text style={styles.name}>{name}</Text>}
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.bottomHalf}>
+          {qrsvg ? this.renderTimer() : <View />}
           {qrsvg ? this.renderQrCode() : this.renderSpinner()}
           {qrsvg ? this.renderCopyQr() : <View />}
         </View>
@@ -289,6 +335,17 @@ const styles = StyleSheet.create({
   copyText: {
     color: '#333',
     fontFamily: 'ApexNew-Book',
+  },
+  timerContainer: {
+    flexDirection: 'row',
+  },
+  timerTextLeft: {
+    fontFamily: 'ApexNew-Book',
+    fontSize: DEVICE_TYPE === 'large' ? 16 : 14,
+  },
+  timerTextRight: {
+    fontFamily: 'ApexNew-Book',
+    fontSize: DEVICE_TYPE === 'large' ? 16 : 14,
   },
 });
 
