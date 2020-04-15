@@ -9,6 +9,7 @@ import {
   SET_USER_DATA,
   SET_USER_NAME,
   SET_NOTIFICATIONS,
+  DISMISS_NOTIFICATION_MSG,
   SET_BACKUP_COMPLETED,
   SET_PASSWORD,
   SET_HASHED_ID,
@@ -108,6 +109,13 @@ export const reducer = (state: UserState = initialState, action: action) => {
         ...state,
         notificationMsg,
         notifications: action.notifications,
+      };
+    }
+    case DISMISS_NOTIFICATION_MSG: {
+      return {
+        ...state,
+        notificationMsg: '',
+        dismissedNotificationMsg: true,
       };
     }
     case SET_BACKUP_COMPLETED: {

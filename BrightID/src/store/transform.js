@@ -6,7 +6,12 @@ import { objToUint8 } from '@/utils/encoding';
 const transformer = createTransform(
   // transform state on its way to being serialized and persisted.
   (inboundState, key) => {
-    return { ...inboundState, searchParam: '' };
+    return {
+      ...inboundState,
+      searchParam: '',
+      dismissedNotificationMsg: false,
+      notificationMsg: '',
+    };
   },
   // transform state being rehydrated
   (outboundState, key) => {

@@ -2,7 +2,7 @@
 
 export const SET_NOTIFICATIONS = 'SET_NOTIFICATIONS';
 export const SET_NOTIFICATION_MSG = 'SET_NOTIFICATION_MSG';
-export const REMOVE_NOTIFICATION_MSG = 'REMOVE_NOTIFICATION_MSG';
+export const DISMISS_NOTIFICATION_MSG = 'DISMISS_NOTIFICATION_MSG';
 
 export const setNotifications = (notificationInfos: NotificationInfo[]) => ({
   type: SET_NOTIFICATIONS,
@@ -14,8 +14,8 @@ export const setNotificationMsg = (msg: string) => ({
   msg,
 });
 
-export const removeNotificationMsg = () => ({
-  type: REMOVE_NOTIFICATION_MSG,
+export const dismissNotificationMsg = () => ({
+  type: DISMISS_NOTIFICATION_MSG,
 });
 
 export const getNotifications = () => async (

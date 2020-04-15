@@ -71,8 +71,12 @@ export {
 
 export {
   SET_NOTIFICATIONS,
+  SET_NOTIFICATION_MSG,
+  DISMISS_NOTIFICATION_MSG,
   setNotifications,
   getNotifications,
+  dismissNotificationMsg,
+  setNotificationMsg,
 } from './notifications';
 
 export {

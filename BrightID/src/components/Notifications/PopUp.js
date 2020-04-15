@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { DEVICE_TYPE } from '@/utils/constants';
+import { dismissNotificationMsg } from '@/actions';
+import { navigate } from '@/NavigationService';
 
 /**
  * Notification Card in the Notifications Screen
@@ -22,7 +24,16 @@ import { DEVICE_TYPE } from '@/utils/constants';
 
 class PopUp extends React.Component<Props> {
   handlePress = () => {
-    alert('pressed');
+    const { notificationMsg } = this.props;
+    if (notificationMsg === 'Backup your BrightID') {
+      this.handleClose();
+      navigate('TrustedConnections');
+    }
+  };
+
+  handleClose = () => {
+    const { dispatch } = this.props;
+    dispatch(dismissNotificationMsg());
   };
 
   render() {
@@ -33,10 +44,10 @@ class PopUp extends React.Component<Props> {
         onPress={this.handlePress}
       >
         <View style={styles.mainContainer}>
-          <MaterialCommunityIcons size={26} name="bell-alert" color="#28a84a" />
+          <MaterialCommunityIcons size={32} name="bell-alert" color="#28a84a" />
           <Text style={styles.msg}>{notificationMsg}</Text>
-          <TouchableOpacity style={styles.confirm} onPress={this.handlePress}>
-            <Ionicon size={26} name="md-return-right" color="#333" />
+          <TouchableOpacity style={styles.confirm} onPress={this.handleClose}>
+            <MaterialCommunityIcons size={26} name="close" color="#333" />
           </TouchableOpacity>
         </View>
       </TouchableHighlight>
@@ -49,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top: 45,
+    top: 40,
     left: '2.5%',
     width: '95%',
     height: DEVICE_TYPE === 'large' ? 94 : 80,
