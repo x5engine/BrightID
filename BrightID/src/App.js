@@ -8,6 +8,7 @@ import { pollOperations } from './utils/operations';
 import AppRoutes from './AppRoutes';
 import { store, persistor } from './store';
 import BottomNav from './BottomNav';
+import PopUp from './components/Notifications/PopUp';
 
 /**
  * Central part of the application
@@ -41,6 +42,7 @@ export default class App extends React.Component<Props> {
         <PersistGate loading={null} persistor={persistor}>
           <View style={styles.container}>
             <AppRoutes />
+            <PopUp />
             <BottomNav />
           </View>
         </PersistGate>
