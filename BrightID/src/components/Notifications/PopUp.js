@@ -1,7 +1,13 @@
 // @flow
 
 import * as React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,35 +21,59 @@ import { DEVICE_TYPE } from '@/utils/constants';
  */
 
 class PopUp extends React.Component<Props> {
+  handlePress = () => {
+    alert('pressed');
+  };
+
   render() {
-    return (
-      <View style={styles.container}>
-        <MaterialCommunityIcons size={26} name="bell-alert" color="#28a84a" />
-        <Text style={styles.msg}>1 New Connection</Text>
-        <TouchableOpacity style={styles.confirm}>
-          <Ionicon size={26} name="md-return-right" color="#333" />
-        </TouchableOpacity>
-      </View>
-    );
+    const { notificationMsg } = this.props;
+    return notificationMsg ? (
+      <TouchableHighlight
+        style={styles.highlightContainer}
+        onPress={this.handlePress}
+      >
+        <View style={styles.mainContainer}>
+          <MaterialCommunityIcons size={26} name="bell-alert" color="#28a84a" />
+          <Text style={styles.msg}>{notificationMsg}</Text>
+          <TouchableOpacity style={styles.confirm} onPress={this.handlePress}>
+            <Ionicon size={26} name="md-return-right" color="#333" />
+          </TouchableOpacity>
+        </View>
+      </TouchableHighlight>
+    ) : null;
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  highlightContainer: {
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     position: 'absolute',
-    top: 30,
+    top: 45,
     left: '2.5%',
     width: '95%',
+    height: DEVICE_TYPE === 'large' ? 94 : 80,
+    borderBottomColor: '#e3e0e4',
+    borderBottomWidth: 1,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  mainContainer: {
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    width: '100%',
+    height: DEVICE_TYPE === 'large' ? 94 : 80,
     backgroundColor: '#fcfcfc',
     paddingVertical: 15,
     paddingHorizontal: 10,
     flexDirection: 'row',
-    borderBottomColor: '#e3e0e4',
-    borderBottomWidth: 1,
-    height: DEVICE_TYPE === 'large' ? 94 : 80,
-    marginBottom: DEVICE_TYPE === 'large' ? 11.8 : 6,
     borderRadius: 10,
   },
   confirm: {
@@ -59,7 +89,7 @@ const styles = StyleSheet.create({
   msg: {
     fontFamily: 'ApexNew-Book',
     color: 'black',
-    fontSize: 14,
+    fontSize: DEVICE_TYPE === 'large' ? 16 : 14,
     marginLeft: 16,
   },
   itemIcon: {
@@ -67,4 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(({ groups, user }) => ({ ...groups, ...user }))(PopUp);
+export default connect(({ user }) => ({ ...user }))(PopUp);

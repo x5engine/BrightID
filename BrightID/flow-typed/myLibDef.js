@@ -144,6 +144,8 @@ declare type UserState = {
   },
   searchParam: string,
   notifications: NotificationInfo[],
+  notificationMsg: string,
+  dismissedNotificationMsg: boolean,
   backupCompleted: boolean,
   verifications: any[],
   publicKey: string,

@@ -26,6 +26,8 @@ const initialState = {
   photo: { filename: '' },
   searchParam: '',
   notifications: [],
+  notificationMsg: '',
+  dismissedNotificationMsg: false,
   backupCompleted: false,
   id: '',
   publicKey: '',
@@ -84,8 +86,27 @@ export const reducer = (state: UserState = initialState, action: action) => {
       };
     }
     case SET_NOTIFICATIONS: {
+      let notificationMsg = '';
+      let connectionCount = 0;
+      let backupAccount = false;
+      if (!state.dismissedNotificationMsg) {
+        action.notifications.forEach((n) => {
+          if (n.type === 'backup') {
+            backupAccount = true;
+          } else if (n.type === 'connection') {
+            connectionCount += 1;
+          }
+        });
+        if (connectionCount > 0) {
+          notificationMsg = `${connectionCount} New Connections`;
+        } else if (backupAccount) {
+          notificationMsg = 'Backup your BrightID';
+        }
+      }
+
       return {
         ...state,
+        notificationMsg,
         notifications: action.notifications,
       };
     }
