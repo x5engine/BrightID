@@ -56,11 +56,13 @@ export class AppsScreen extends React.Component<Prop, State> {
 
   render() {
     const { selectedApp } = this.state;
+    const { apps } = this.props;
     return (
       <View style={styles.container}>
         <FlatList
           style={styles.AppsList}
-          data={this.props.apps}
+          data={apps}
+          contentContainerStyle={apps.listContainer}
           keyExtractor={({ name }, index) => name + index}
           renderItem={({ item }) => (
             <AppCard {...item} handleAction={this.handleAction} />
@@ -70,8 +72,7 @@ export class AppsScreen extends React.Component<Prop, State> {
               title="No Apps."
               iconSize={46}
               iconType={"castle"}
-              messageStyle={styles.message}
-             />
+           />
           }
         />
         <ActionSheet
@@ -96,17 +97,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fdfdfd',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: "row"
+  },
+  centerItem:{
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listContainer: {
+    height: '100%',
+    flexGrow: 1
   },
   AppsList: {
     flex: 1,
-  },
-  message: {
-    fontFamily: 'ApexNew-Medium',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: '#ccc',
-  },
+  }
 });
 
 export default connect((state) => ({ apps: state.apps.apps }))(AppsScreen);

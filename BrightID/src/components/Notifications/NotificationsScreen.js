@@ -70,7 +70,6 @@ class NotificationsScreen extends React.Component<Props, State> {
               title="Nothing here, come back later.."
               iconSize={46}
               iconType={"bell-off-outline"}
-              messageStyle={styles.message}
               />
           }
           renderItem={({ item }) =>
@@ -100,14 +99,7 @@ const styles = StyleSheet.create({
   listContainer: {
     height: '100%',
     flexGrow: 1
-  },
-  message: {
-   fontFamily: 'ApexNew-Medium',
-   textAlign: 'center',
-   fontWeight: 'bold',
-   fontSize: 18,
-   color: '#ccc',
- },
+  }
 });
 
 export default connect(({ groups, user }) => ({ ...groups, ...user }))(
